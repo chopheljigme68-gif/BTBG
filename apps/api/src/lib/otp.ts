@@ -12,6 +12,10 @@ const TTL_MIN = 10;
 const MAX_ATTEMPTS = 5;
 const MAX_PER_HOUR = 6;
 
+// Demo only: when DEMO_ACCEPT_ANY_OTP=true, any code typed in is accepted and the hourly
+// limit is skipped, so the system can be shown without an SMS gateway. Turn it off before real use.
+const acceptAnyCode = process.env.DEMO_ACCEPT_ANY_OTP === 'true';
+
 const hashCode = (mobile: string, purpose: string, code: string) => sha256(`${purpose}:${mobile}:${code}`);
 
 /**
@@ -27,7 +31,7 @@ export async function issueOtp(
     [input.mobile],
     db,
   );
-  if ((recent?.n ?? 0) >= MAX_PER_HOUR) {
+  if (!acceptAnyCode && (recent?.n ?? 0) >= MAX_PER_HOUR) {
     throw new AppError(429, 'otp_rate_limited', 'Too many codes were requested. Please wait an hour and try again.');
   }
   const code = randomDigits(6);
@@ -59,8 +63,8 @@ export async function verifyOtp(
   );
   if (!row) throw badRequest('No active code found. Ask for a new code.');
   if (row.expired) throw badRequest('This code has expired. Ask for a new code.');
-  if (row.attempts >= MAX_ATTEMPTS) throw badRequest('Too many wrong attempts. Ask for a new code.');
-  if (!safeEqual(row.code_hash, hashCode(input.mobile, input.purpose, input.code.trim()))) {
+  if (!acceptAnyCode && row.attempts >= MAX_ATTEMPTS) throw badRequest('Too many wrong attempts. Ask for a new code.');
+  if (!acceptAnyCode && !safeEqual(row.code_hash, hashCode(input.mobile, input.purpose, input.code.trim()))) {
     // Count the failure outside the caller's transaction so a rollback cannot erase it.
     await pool.query('update otp_codes set attempts = attempts + 1 where id = $1', [row.id]);
     throw badRequest('That code is not correct. Check the SMS and try again.');
