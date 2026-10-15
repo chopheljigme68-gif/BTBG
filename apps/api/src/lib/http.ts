@@ -2,7 +2,7 @@ import { Router, type Request, type RequestHandler, type Response } from 'expres
 import multer from 'multer';
 import { z, type ZodType } from 'zod';
 import { authenticate, type AuthContext } from '../middleware/auth.js';
-import { badRequest, forbidden, unauthorized } from './errors.js';
+import { AppError, badRequest, forbidden, unauthorized } from './errors.js';
 
 /**
  * A tiny routing layer on top of Express that gives every endpoint:
@@ -54,8 +54,14 @@ export function createModule(prefix: string, tag: string) {
     const chain: RequestHandler[] = [];
     if (spec.upload) chain.push(uploader.single('file'));
     chain.push(async (req, res) => {
-      const auth = await authenticate(req, { allowPendingMfa: spec.allowPendingMfa });
-      if (spec.access !== 'public' && spec.access !== 'optional') {
+      const open = spec.access === 'public' || spec.access === 'optional';
+      // On open pages a half-finished or timed-out sign-in must not get in the way
+      // (for example registering in a browser that still holds an old session).
+      const auth = await authenticate(req, { allowPendingMfa: spec.allowPendingMfa }).catch((err) => {
+        if (open && err instanceof AppError && err.status === 401) return null;
+        throw err;
+      });
+      if (!open) {
         if (!auth) throw unauthorized();
         if (typeof spec.access === 'object' && !spec.access.any.some((p) => auth.permissions.has(p))) throw forbidden();
       }
