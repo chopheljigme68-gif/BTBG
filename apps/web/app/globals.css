@@ -1,0 +1,46 @@
+@import 'tailwindcss';
+
+/* BTBG brand: navy and gold on warm cream, taken from the logo. */
+@theme {
+  --color-navy-50: #eef2f8;
+  --color-navy-100: #d6e0ee;
+  --color-navy-200: #aec1dc;
+  --color-navy-300: #7f9bc4;
+  --color-navy-500: #2b5492;
+  --color-navy-700: #133b73;
+  --color-navy-800: #0f3366;
+  --color-navy-900: #0a2c5c;
+  --color-navy-950: #071e40;
+  --color-gold-50: #fdf6ea;
+  --color-gold-100: #f9e7c8;
+  --color-gold-300: #ecc07f;
+  --color-gold-500: #de9c3b;
+  --color-gold-600: #c5822a;
+  --color-gold-700: #9e6620;
+  --color-cream: #f9f5ec;
+  --color-cream-dark: #f1eadb;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', 'Noto Sans Tibetan', 'Jomolhari', sans-serif;
+  --radius-card: 14px;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+body { background: var(--color-cream); color: #14213a; }
+
+@layer components {
+  .btn, .btn-primary, .btn-gold, .btn-outline, .btn-ghost, .btn-danger { @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500; }
+  .btn-primary { @apply bg-navy-900 text-white hover:bg-navy-800; }
+  .btn-gold { @apply bg-gold-500 text-navy-950 hover:bg-gold-600; }
+  .btn-outline { @apply border border-navy-200 bg-white text-navy-900 hover:bg-navy-50; }
+  .btn-ghost { @apply text-navy-900 hover:bg-navy-50; }
+  .btn-danger { @apply bg-red-700 text-white hover:bg-red-800; }
+  .btn-sm { @apply px-3 py-1.5 text-xs; }
+  .card { @apply rounded-[var(--radius-card)] border border-navy-100/70 bg-white shadow-sm; }
+  .input { @apply block w-full rounded-lg border border-navy-200 bg-white px-3 py-2.5 text-sm text-navy-950 shadow-xs placeholder:text-slate-400 focus:border-navy-500 focus:ring-2 focus:ring-navy-100 focus:outline-none disabled:bg-slate-50; }
+  .label { @apply mb-1 block text-sm font-medium text-navy-900; }
+  .link { @apply font-medium text-navy-700 underline decoration-gold-500 decoration-2 underline-offset-2 hover:text-navy-900; }
+  .table-wrap { @apply overflow-x-auto; }
+  .table { @apply w-full text-left text-sm; }
+  .table th { @apply border-b border-navy-100 bg-navy-50/60 px-3 py-2 text-xs font-semibold tracking-wide text-navy-700 uppercase; }
+  .table td { @apply border-b border-navy-50 px-3 py-2.5 align-top; }
+  .table tr:hover td { @apply bg-cream/60; }
+}

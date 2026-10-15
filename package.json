@@ -1,0 +1,27 @@
+{
+  "name": "btbg-platform",
+  "private": true,
+  "version": "1.0.0",
+  "description": "BTBG Digital Platform: Employer of Record, placement, workforce and career awareness system",
+  "workspaces": [
+    "apps/api",
+    "apps/web"
+  ],
+  "engines": {
+    "node": ">=20.11"
+  },
+  "scripts": {
+    "dev": "node scripts/run.mjs dev",
+    "dev:api": "node scripts/run.mjs api dev",
+    "dev:web": "node scripts/run.mjs web dev",
+    "build": "npm run build --workspaces",
+    "start:api": "node scripts/run.mjs api start",
+    "start:web": "node scripts/run.mjs web start",
+    "test": "npm test --workspace apps/api",
+    "typecheck": "npm run typecheck --workspaces",
+    "db:migrate": "node scripts/run.mjs api migrate",
+    "db:seed": "node scripts/run.mjs api seed",
+    "db:create-admin": "node scripts/run.mjs api create-admin",
+    "secrets": "node scripts/secrets.mjs"
+  }
+}

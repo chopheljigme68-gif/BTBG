@@ -1,0 +1,12 @@
+node_modules/
+.next/
+dist/
+coverage/
+.env
+.env.local
+apps/api/storage/
+*.log
+.DS_Store
+next-env.d.ts
+*.tsbuildinfo
+apps/api/storage-test/
